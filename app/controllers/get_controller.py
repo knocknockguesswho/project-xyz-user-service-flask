@@ -46,7 +46,7 @@ class GetController:
             else:
               response_helper.message = 'wrong password'
               response_helper.status = 403
-              response_helper.remove_datas()
+              response_helper.remove_data()
           except Exception as e:
               status_code = 400
               if type(e) == NoResultFound: status_code = 404

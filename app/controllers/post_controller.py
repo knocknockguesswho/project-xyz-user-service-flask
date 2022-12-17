@@ -35,7 +35,7 @@ class PostController:
                 session.add(Users(first_name=first_name, last_name=last_name,
                                   birth_date=birth_date, email=email, username=username, password=password, avatar=avatar, country_code=country_code))
                 session.commit()
-                response_helper.remove_datas()
+                response_helper.remove_data()
             except IntegrityError:
               # rollback commit if input is satisfy the error of `IntegrityError`
               session.rollback()

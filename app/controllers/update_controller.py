@@ -30,7 +30,7 @@ class UpdateController:
         if query.one_or_none() is None: raise NoResultFound
         query.update({Users.username: username}, synchronize_session=False)
         session.commit()
-        response_helper.remove_datas()
+        response_helper.remove_data()
       except IntegrityError:
         # rollback commit if input is satisfy the error of `IntegrityError`
         session.rollback()

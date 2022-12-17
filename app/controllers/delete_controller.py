@@ -15,7 +15,7 @@ class DeleteController:
     with Session() as session:
       try:
         Query(Todos, session).filter(Todos.id == id).delete(synchronize_session=False)
-        response_helper.remove_datas()
+        response_helper.remove_data()
       except Exception as e:
         response_helper.set_to_failed(str(e),400)
       finally:
@@ -27,7 +27,7 @@ class DeleteController:
     with Session() as session:
       try:
         Query(Todos, session).filter(Todos.id > 0).delete(synchronize_session=False)
-        response_helper.remove_datas()
+        response_helper.remove_data()
       except Exception as e:
         response_helper.set_to_failed(str(e),400)
       finally:
