@@ -1,5 +1,3 @@
-from multiprocessing import Process, Value
-import time, sched
 from flask import Flask
 from flask_cors import CORS
 # from app.controllers.delete_controller import DeleteController
@@ -46,30 +44,3 @@ def update_username(id: int):
 # region DELETE METHOD
 
 # endregion DELETE METHOD
-
-
-
-def record_loop(loop_on):
-   while True:
-      if loop_on.value == True:
-         print("loop running")
-      time.sleep(1)
-
-if __name__ == "__main__":
-   recording_on = Value('b', True)
-   p = Process(target=record_loop, args=(recording_on,))
-   p.start()  
-   app.run(debug=True, use_reloader=False)
-   p.join()
-# def print_time(a='default'):
-#   print('From print_time', time.time(), a)
-
-# def print_some_times():
-#   s = sched.scheduler(time.time, time.sleep)
-#   print(time.time())
-#   s.enter(10, 1, print_time)
-#   s.enter(5, 1, print_time, argument=('keyword',))
-#   s.enter(5, 2, print_time, argument=('positional',))
-#   s.run()
-#   print(time.time())
-# print_some_times()
