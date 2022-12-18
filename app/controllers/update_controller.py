@@ -2,11 +2,10 @@ from pymysql import IntegrityError
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.auth_helper import AuthHelper
+from app.helpers.error_helper import ERROR_DATA_ID_NOT_FOUND
 from flask import request
 from sqlalchemy.orm import Query
 from sqlalchemy.exc import NoResultFound
-
-_ERROR_DATA_WITH_ID_NOT_FOUND_ = 'cannot find todo with id '
 
 class UpdateController:
   def __init__(self): pass
@@ -41,7 +40,7 @@ class UpdateController:
         if e.__cause__ is not None: msg = str(e.__cause__)
         if type(e) == NoResultFound:
           status_code = 404
-          msg = f'{_ERROR_DATA_WITH_ID_NOT_FOUND_}{id}'
+          msg = f'{ERROR_DATA_ID_NOT_FOUND}{id}'
         response_helper.set_to_failed(msg,status_code)
       finally:
         return response_helper.get_response()
@@ -74,7 +73,7 @@ class UpdateController:
         if e.__cause__ is not None: msg = str(e.__cause__)
         elif type(e) == NoResultFound:
           status_code = 404
-          msg = f'{_ERROR_DATA_WITH_ID_NOT_FOUND_}{id}'
+          msg = f'{ERROR_DATA_ID_NOT_FOUND}{id}'
         response_helper.set_to_failed(msg,status_code)
       finally:
         return response_helper.get_response()
