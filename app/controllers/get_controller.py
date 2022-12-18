@@ -1,6 +1,7 @@
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.auth_helper import AuthHelper
+from app.helpers.error_helper import ERROR_DATA_USERNAME_NOT_FOUND, ERROR_DATA_ID_NOT_FOUND
 from flask import request
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Query
@@ -48,7 +49,28 @@ class GetController:
             else: response_helper.set_to_failed('wrong password', 403)
           except Exception as e:
               status_code = 400
-              if type(e) == NoResultFound: status_code = 404
-              response_helper.set_to_failed(str(e), status_code)
+              msg = str(e)
+              if type(e) == NoResultFound:
+                msg = f'{ERROR_DATA_USERNAME_NOT_FOUND}{username}'
+                status_code = 404
+              response_helper.set_to_failed(msg, status_code)
           finally:
               return response_helper.get_response()
+
+    def get_by_id(self, **params):
+      response_helper = ResponseHelper()
+      id = params['id']
+      with Session() as session:
+        try:
+          query = Query(Users, session).filter(Users.id == id)
+          response_helper.set_data(query.one().get_item())
+        except Exception as e:
+            status_code = 400
+            msg = str(e)
+            if e.__cause__ is not None: msg = str(e.__cause__)
+            if type(e) == NoResultFound:
+              msg = f'{ERROR_DATA_ID_NOT_FOUND}{id}'
+              status_code = 404
+            response_helper.set_to_failed(msg, status_code)
+        finally:
+            return response_helper.get_response()

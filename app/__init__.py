@@ -24,6 +24,11 @@ def get_user():
 @app.route('/check-credential')
 def check_credential():
     return get_controller.check_credential()
+
+@app.route('/get-by-id/<int:id>')
+def get_by_id(id: int):
+  print(type(id))
+  return get_controller.get_by_id(id=id)
 # endregion GET METHOD
 
 
