@@ -1,5 +1,6 @@
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
+from app.helpers.auth_helper import AuthHelper
 from flask import request
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Query
@@ -42,7 +43,8 @@ class GetController:
           try:
             query = Query(Users, session).filter(Users.username == username)
             data_password = query.one().password
-            if password == data_password: response_helper.set_data(query.one().get_item())
+            password_match = AuthHelper().is_password_match(password=password, b64_password=data_password)
+            if password_match: response_helper.set_data(query.one().get_item())
             else:
               response_helper.message = 'wrong password'
               response_helper.status = 403
