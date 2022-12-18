@@ -1,6 +1,7 @@
 from pymysql import IntegrityError
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
+from app.helpers.auth_helper import AuthHelper
 from flask import request
 
 from utils import default_or_str
@@ -32,8 +33,10 @@ class PostController:
                 avatar = default_or_str(None, request.form['avatar'])
                 birth_date = request.form['birth_date']
                 country_code = request.form['country_code']
+                
+                hashed_password = AuthHelper().hash_password(password=password)
                 session.add(Users(first_name=first_name, last_name=last_name,
-                                  birth_date=birth_date, email=email, username=username, password=password, avatar=avatar, country_code=country_code))
+                                  birth_date=birth_date, email=email, username=username, password=hashed_password, avatar=avatar, country_code=country_code))
                 session.commit()
                 response_helper.remove_data()
             except IntegrityError:
