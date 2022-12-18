@@ -38,6 +38,10 @@ def add_user():
 @app.route('/update-username/<int:id>', methods=['PUT'])
 def update_username(id: int):
   return update_controller.update_username(id=id)
+
+@app.route('/update-password/<int:id>', methods=['PUT'])
+def update_password(id: int):
+  return update_controller.update_password(id=id)
 # endregion PUT METHOD
 
 
