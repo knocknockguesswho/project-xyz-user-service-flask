@@ -65,7 +65,7 @@ class PostController:
             query = Query(Users, session).filter(Users.username == username)
             data_password = query.one().password
             password_match = AuthHelper().is_password_match(password=password, b64_password=data_password)
-            if password_match: response_helper.remove_data()
+            if password_match: response_helper.set_data(query.one().get_item())
             else: response_helper.set_to_failed('wrong password', 403)
           except Exception as e:
               status_code = 400
