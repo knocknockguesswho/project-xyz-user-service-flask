@@ -21,13 +21,8 @@ update_controller = UpdateController()
 def get_user():
     return get_controller.get_user_detail()
 
-@app.route('/check-credential')
-def check_credential():
-    return get_controller.check_credential()
-
 @app.route('/get-by-id/<int:id>')
 def get_by_id(id: int):
-  print(type(id))
   return get_controller.get_by_id(id=id)
 # endregion GET METHOD
 
@@ -36,6 +31,10 @@ def get_by_id(id: int):
 @app.route('/add', methods=['POST'])
 def add_user():
     return post_controller.add_user()
+
+@app.route('/check-credential', methods=['POST'])
+def check_credential():
+    return post_controller.check_credential()
 # endregion POST METHOD
 
 

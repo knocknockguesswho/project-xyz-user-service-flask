@@ -1,8 +1,11 @@
+from flask import request
+from sqlalchemy.orm import Query
+from sqlalchemy.exc import NoResultFound
 from pymysql import IntegrityError
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.auth_helper import AuthHelper
-from flask import request
+from app.helpers.error_helper import ERROR_DATA_USERNAME_NOT_FOUND
 
 from utils import default_or_str
 
@@ -47,3 +50,29 @@ class PostController:
                 else: response_helper.set_to_failed(str(e), 400)
             finally:
                 return response_helper.get_response()
+
+    def check_credential(self, **params):
+        """
+        Request Form
+          `password`: str max 32char @required
+          `username`: str max 32char @required @unique
+        """
+        response_helper = ResponseHelper()
+        with Session() as session:
+          username = request.form['username']
+          password = request.form['password']
+          try:
+            query = Query(Users, session).filter(Users.username == username)
+            data_password = query.one().password
+            password_match = AuthHelper().is_password_match(password=password, b64_password=data_password)
+            if password_match: response_helper.set_data(query.one().get_item())
+            else: response_helper.set_to_failed('wrong password', 403)
+          except Exception as e:
+              status_code = 400
+              msg = str(e)
+              if type(e) == NoResultFound:
+                msg = f'{ERROR_DATA_USERNAME_NOT_FOUND}{username}'
+                status_code = 404
+              response_helper.set_to_failed(msg, status_code)
+          finally:
+              return response_helper.get_response()
