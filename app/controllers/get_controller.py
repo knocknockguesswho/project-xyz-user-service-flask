@@ -3,7 +3,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Query
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
-from app.helpers.error_helper import ERROR_DATA_ID_NOT_FOUND
+from app.helpers.error_helper import ERROR_DATA_ID_NOT_FOUND, ERROR_DATA_USERNAME_NOT_FOUND
 
 from utils import default_or_int
 
@@ -42,23 +42,26 @@ class GetController:
             msg = str(e)
             if e.__cause__ is not None: msg = str(e.__cause__)
             if type(e) == NoResultFound:
-              msg = f'{ERROR_DATA_ID_NOT_FOUND}{id}'
+              msg = f'{ERROR_DATA_ID_NOT_FOUND, ERROR_DATA_USERNAME_NOT_FOUND}{id}'
               status_code = 404
             response_helper.set_to_failed(msg, status_code)
         finally:
             return response_helper.get_response()
 
-
-    def tes(self, **params):
+    def get_by_username(self, **params):
       response_helper = ResponseHelper()
-      id = params['id']
       with Session() as session:
+        username = params['username']
         try:
-          query = Query(Users, session).filter(Users.id == id)
+          query = Query(Users, session).filter(Users.username == username)
           response_helper.set_data(query.one().get_item())
         except Exception as e:
           status_code = 400
           msg = str(e)
+          if e.__cause__ is not None: msg = str(e.__cause__)
+          if type(e) == NoResultFound:
+            msg = f'{ERROR_DATA_USERNAME_NOT_FOUND}{username}'
+            status_code = 404
           response_helper.set_to_failed(msg, status_code)
         finally:
-            return response_helper.get_response()
+          return response_helper.get_response()

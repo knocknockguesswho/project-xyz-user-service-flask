@@ -1,4 +1,4 @@
-from app.config.schema import Session, Todos
+from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
 from sqlalchemy.orm import Query
 
@@ -14,7 +14,7 @@ class DeleteController:
     id = params['id']
     with Session() as session:
       try:
-        Query(Todos, session).filter(Todos.id == id).delete(synchronize_session=False)
+        Query(Users, session).filter(Users.id == id).delete(synchronize_session=False)
         response_helper.remove_data()
       except Exception as e:
         response_helper.set_to_failed(str(e),400)
@@ -26,7 +26,7 @@ class DeleteController:
     response_helper = ResponseHelper()
     with Session() as session:
       try:
-        Query(Todos, session).filter(Todos.id > 0).delete(synchronize_session=False)
+        Query(Users, session).filter(Users.id > 0).delete(synchronize_session=False)
         response_helper.remove_data()
       except Exception as e:
         response_helper.set_to_failed(str(e),400)
