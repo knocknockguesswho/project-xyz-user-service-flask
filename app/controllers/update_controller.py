@@ -1,11 +1,10 @@
-from pymysql import IntegrityError
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.auth_helper import AuthHelper
 from app.helpers.error_helper import ERROR_DATA_ID_NOT_FOUND
 from flask import request
 from sqlalchemy.orm import Query
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 
 class UpdateController:
   def __init__(self): pass
@@ -31,8 +30,9 @@ class UpdateController:
           query.update({Users.username: username}, synchronize_session=False)
           session.commit()
           response_helper.remove_data()
-      except IntegrityError:
+      except IntegrityError as e:
         # rollback commit if input is satisfy the error of `IntegrityError`
+        response_helper.set_to_failed(eval(str(e.__cause__))[1], 409)
         session.rollback()
       except Exception as e:
         status_code = 400
