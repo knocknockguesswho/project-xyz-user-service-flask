@@ -1,6 +1,6 @@
 from flask import request
 from sqlalchemy.orm import Query
-from sqlalchemy.exc import NoResultFound, IntegrityError
+from sqlalchemy.exc import NoResultFound, IntegrityError, OperationalError
 # from pymysql import IntegrityError
 from app.config.schema import Session, Users
 from app.helpers.response_helper import ResponseHelper
@@ -42,6 +42,9 @@ class PostController:
                                   birth_date=birth_date, email=email, username=username, password=hashed_password, avatar=avatar, country_code=country_code))
                 session.commit()
                 response_helper.remove_data()
+            except OperationalError as e:
+              response_helper.set_to_failed(eval(str(e.__cause__))[1], 400)
+              session.rollback()
             except IntegrityError as e:
               # rollback commit if input is satisfy the error of `IntegrityError`
               response_helper.set_to_failed(eval(str(e.__cause__))[1], 409)
